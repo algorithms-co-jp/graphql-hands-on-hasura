@@ -1,0 +1,28 @@
+version: "3.6"
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: hasura
+      POSTGRES_PASSWORD: hasura_password
+      POSTGRES_DB: hasura_db
+    ports:
+      - "5432:5432"
+
+  graphql-engine:
+    image: hasura/graphql-engine:latest.cli-migrations-v3
+    depends_on:
+      - postgres
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://hasura:hasura_password@postgres:5432/hasura_db
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: my_admin_secret_key
+
+    volumes:
+      - ./metadata:/hasura-metadata
+      - ./migrations:/hasura-migrations

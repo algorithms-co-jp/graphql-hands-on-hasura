@@ -1,0 +1,11 @@
+table:
+  name: tasks
+  schema: public
+array_relationships:
+  - name: tasks_comments
+    using:
+      foreign_key_constraint_on:
+        column: task_id
+        table:
+          name: comments
+          schema: public
